@@ -6,7 +6,6 @@ PSX.Dev-README.md
 *.dep
 *.o
 *.a
-.vscode
 .sentry-native
 *.cue
 *.bin
