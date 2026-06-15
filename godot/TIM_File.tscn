@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://rbsvrxnffb8j"]
+
+[ext_resource type="Script" uid="uid://bat74c1nuclyi" path="res://TIM_File.gd" id="1_pl3wq"]
+
+[node name="TIM_File" type="Node" unique_id=131596957]
+script = ExtResource("1_pl3wq")
