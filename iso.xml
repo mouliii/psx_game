@@ -123,7 +123,7 @@
 			<file name="ARCHER.TIM" type="data" source="textures/archer.tim"/>
 			<file name="TILEMAP.TIM" type="data" source="textures/tile_atlas.tim"/>
 			<file name="MAP1.MAP" type="data" source="data/MAP1.MAP"/>
-			
+			<!-- max 15 filua root -->
 			<!-- <dir>
 				Specifies a subdirectory to the directory structure. <file> and <dir> elements inside
 				the element will be stored inside it.
@@ -136,7 +136,7 @@
 					order	- Optional, custom Directory Record order (see above for description).
 						  
 			-->
-			<dir name="data">
+			<dir name="data_todo">
 				<!-- <file name="MAP.DAT" type="data" source="data/MAP.DAT"/> -->
 				<!-- All <file> and <dir> elements here will be inside mydir -->
 				<!-- Specifies a directory named mystreams inside mydir -->

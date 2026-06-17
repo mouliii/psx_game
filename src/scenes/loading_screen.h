@@ -6,8 +6,9 @@
 #include "psyqo/scene.hh"
 #include "psyqo/coroutine.hh"
 #include "psyqo/task.hh"
+
+#include "core_systems/graphics.h"
 #include "core_systems/asset_manager.h"
-#include "main_menu.h"
 
 class LoadingScreenScene: public psyqo::Scene
 {
@@ -19,6 +20,4 @@ public:
     psyqo::Coroutine<> m_loaderCoro;
     psyqo::Coroutine<Texture*> m_texCoro;
     psyqo::Font<> m_systemFont;
-protected:
-    MainMenuScene menu;
 };

@@ -4,8 +4,8 @@
 #include "psyqo/gpu.hh"
 #include "psyqo/scene.hh"
 
-#include "main_menu.h"
-#include "loading_screen.h"
+#include "scenes/main_menu.h"
+#include "scenes/loading_screen.h"
 #include "core_systems/cdrom_loader.h"
 #include "core_systems/asset_manager.h"
 #include "core_systems/graphics.h"
@@ -14,13 +14,28 @@ class RootScene: public psyqo::Scene
 {
     void start(Scene::StartReason reason) override
     {
-        syscall_puts("initilaizing systems...\n");
-        CdRomLoader::Initialize();
-        AssetManager::Initialize();
-        Graphics::Initialize(gpu());
-        syscall_puts("done.\n");
-        pushScene(&loadingScreen);
-        //pushScene(&menu);
+        switch (reason)
+        {
+        case StartReason::Create:
+            syscall_puts("initilaizing systems...\n");
+            CdRomLoader::Initialize();
+            AssetManager::Initialize();
+            Graphics::Initialize(gpu());
+            syscall_puts("done.\n");
+            
+            mainMenu = new MainMenuScene();
+            loadingScreen = new LoadingScreenScene();
+
+            AssetManager::Instance().filesToLoad = {"AWESOME.TIM;1", "BGLEFT.TIM;1", "BGRIGHT.TIM;1", "ARCHER.TIM;1", "TILEMAP.TIM;1", "MAP1.MAP;1"};
+            pushScene(loadingScreen);
+        break;
+        case StartReason::Resume:
+            delete loadingScreen;
+            pushScene(mainMenu);
+        break;
+        default:
+            break;
+        }
     }
 
     void frame() override
@@ -28,10 +43,15 @@ class RootScene: public psyqo::Scene
     }
 
     void teardown(Scene::TearDownReason reason) override
-    {}
-protected:
-    MainMenuScene menu;
-    LoadingScreenScene loadingScreen;
+    {
+        if (reason == TearDownReason::Destroy)
+        {
+            delete mainMenu;
+        }
+    }
+private:
+    MainMenuScene* mainMenu;
+    LoadingScreenScene* loadingScreen;
 };
 
 class App : public psyqo::Application

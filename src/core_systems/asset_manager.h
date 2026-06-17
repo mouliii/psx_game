@@ -48,7 +48,8 @@ public:
     //void DatastoreCopyTo(uint8_t* src, uint8_t* dst, size_t size);
     //void DatastoreDelete();
 public:
-    psyqo::Buffer<uint8_t> dataStore;
+    psyqo::Buffer<uint8_t> dataStore; // <- tilemappia varten atm
+    eastl::vector<eastl::string_view> filesToLoad;
 private:
     void StoreTexture(eastl::string_view fileName, Texture tex);
 private:

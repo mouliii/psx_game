@@ -14,7 +14,11 @@
         "${workspaceFolder}/third_party/nugget",
         "${workspaceFolder}/third_party/nugget/third_party/EASTL/include",
         "${workspaceFolder}/third_party/nugget/third_party/EABase/include/common",
-        "${workspaceFolder}/src"
+        "${workspaceFolder}/src/**"
+        //"${workspaceFolder}/src/core_systems",
+        //"${workspaceFolder}/src/entities",
+        //"${workspaceFolder}/src/game_systems",
+        //"${workspaceFolder}/src/scenes"
       ],
       "intelliSenseMode": "gcc-x86"
     },

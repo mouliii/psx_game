@@ -4,21 +4,12 @@
 #include "psyqo/font.hh"
 #include "psyqo/gpu.hh"
 #include "psyqo/scene.hh"
-#include "psyqo/coroutine.hh"
-#include "psyqo/primitives.hh"
-#include "psyqo/task.hh"
-#include "psyqo/fragments.hh"
-#include "psyqo/ordering-table.hh"
-#include "psyqo/bump-allocator.hh"
 #include "psyqo/advancedpad.hh"
 
 #include "core_systems/graphics.h"
 #include "core_systems/asset_manager.h"
-#include "entities/player.h"
 #include "game_systems/camera.h"
-#include "game_systems/tilemap.h"
-
-
+#include "scenes/game_scene.h"
 
 class MainMenuScene: public psyqo::Scene
 {
@@ -33,4 +24,5 @@ public:
     psyqo::Prim::TexturedQuad bgLeft;
     psyqo::Prim::TexturedQuad bgRight;
     psyqo::AdvancedPad m_gamePad;
+    psyqo::Scene* gameScene;
 };
