@@ -14,11 +14,11 @@ public:
     Animation() = default;
     Animation(uint16_t vramX, uint16_t vramY, uint16_t width, uint16_t height, uint16_t nFrames, uint16_t holdTimeInFrames);
     void Update();
-    void PauseAnimation(){paused = true;}
-    void ResumeAnimation(){paused = false;}
+    void PauseAnimation();
+    void ResumeAnimation();
     // NYI
     void ReverseAnimation();
-    psyqo::Rect& GetFrame(){return frames[curFrame];}
+    psyqo::Rect& GetFrame();
     void InvertX(psyqo::Rect& rect);
 public:
     uint16_t framesElapsed = 0;

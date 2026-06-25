@@ -29,7 +29,7 @@ void Graphics::BeginFrame() {
 
 void Graphics::EndFrame()
 {
-    //m_gpu.chain(m_orderingTables[m_parity]);
+    m_gpu.chain(m_orderingTables[m_parity]);
     m_gpu.sendChain();
 }
 // TODO: make own text drawing system then put this to EndFrame();
@@ -46,26 +46,61 @@ void Graphics::SetClearColor(psyqo::Color color)
 void Graphics::SetActiveCamera(Camera2D* camera) {
     m_activeCamera = camera;
 }
+void Graphics::SetActiveFont(Texture *tex)
+{
+    fontTexture = tex;
+}
+void Graphics::DrawText(const psyqo::Vec2 pos, const psyqo::Color color, const char *format, ...)
+{
+    char buffer[256];
+    va_list args;
+    va_start(args, format);
+    vsnprintf(buffer, sizeof(buffer), format, args);
+    va_end(args);
+    psyqo::Vec2 charPos = pos;
+    int16_t w = 8, h = 16;
+    psyqo::Vertex uvBase = GetTextureUV(fontTexture);
+    for (size_t i = 0; buffer[i] != '\0'; i++)
+    {
+        int16_t glyph = buffer[i];
+        if (glyph == ' '){ // 32
+            charPos.x += w;
+            continue;
+        }
+        else if (glyph == '\n'){
+            charPos.y += h;
+            charPos.x = pos.x;
+            continue;
+        }
+        glyph -= 32;
 
+        int16_t uvx = uvBase.x + (glyph % 16) * 16;
+        int16_t uvy = uvBase.y + (glyph / 16) * 16;
+        DrawTexturedQuad(fontTexture, psyqo::Vec2(charPos.x, charPos.y), {w,h}, {{uvx, uvy},{15,15}}, 0, color);
+        charPos.x += w;
+    }
+}
+// returns UV topleft offset in pixels
 psyqo::Vertex Graphics::GetTextureUV(Texture *texture)
 {
-    //uint16_t TPageVramX = (texture->x / TPAGE_WIDTH) * TPAGE_WIDTH;
+    //uint16_t TPageVramX2 = (texture->x / TPAGE_WIDTH) * TPAGE_WIDTH;
     //uint16_t TPageVramY = (texture->y / TPAGE_HEIGHT) * TPAGE_HEIGHT;
 
-    int16_t TPageVramX = texture->x & ~255;
-    int16_t TPageVramY = texture->y & ~255;
+    int16_t TPageVramX = texture->x & ~(TPAGE_WIDTH - 1);
+    int16_t TPageVramY = texture->y & ~(TPAGE_HEIGHT - 1);
+    //printf("non: %d, &: %d\n", TPageVramX2, TPageVramX);
     int16_t uvx = (texture->x - TPageVramX) << (2 - texture->colorMode);
     int16_t uvy = texture->y - TPageVramY;
 
     return {uvx, uvy};
 }
 
-void Graphics::DrawTexturedQuad(const Texture *texture, const psyqo::Vec2 pos, const psyqo::Vertex size, const psyqo::Rect &uv, uint16_t otEntry, psyqo::Color color)
+void Graphics::DrawTexturedQuad(const Texture *texture, const psyqo::Vec2 pos, const psyqo::Vertex size, const psyqo::Rect uv, uint16_t otEntry, psyqo::Color color)
 {
     auto& texQuad = m_primitiveBuffers[m_parity].allocateFragment<psyqo::Prim::TexturedQuad>();
     if (!texture)
     {
-        // TODO: ASSERT !TEX
+        psyqo::Kernel::assert(texture != nullptr, "Texture is null pointer");
         syscall_puts("TEXTURE IS NULL !!\n");
         return;
     }
@@ -84,9 +119,9 @@ void Graphics::DrawTexturedQuad(const Texture *texture, const psyqo::Vec2 pos, c
     texQuad.primitive.pointC = {screenX, static_cast<int16_t>(screenY + size.y)};
     texQuad.primitive.pointD = {static_cast<int16_t>(screenX + size.x), static_cast<int16_t>(screenY + size.y)};
     texQuad.primitive.uvA = psyqo::PrimPieces::UVCoords({static_cast<uint8_t>(uv.pos.x), static_cast<uint8_t>(uv.pos.y)});
-    texQuad.primitive.uvB = psyqo::PrimPieces::UVCoords({static_cast<uint8_t>(uv.pos.x + uv.size.x - 1), static_cast<uint8_t>(uv.pos.y)});
-    texQuad.primitive.uvC = psyqo::PrimPieces::UVCoordsPadded({static_cast<uint8_t>(uv.pos.x), static_cast<uint8_t>(uv.pos.y + uv.size.y - 1)});
-    texQuad.primitive.uvD = psyqo::PrimPieces::UVCoordsPadded({static_cast<uint8_t>(uv.pos.x + uv.size.x - 1), static_cast<uint8_t>(uv.pos.y + uv.size.y - 1)});
+    texQuad.primitive.uvB = psyqo::PrimPieces::UVCoords({static_cast<uint8_t>(uv.pos.x + uv.size.x), static_cast<uint8_t>(uv.pos.y)});
+    texQuad.primitive.uvC = psyqo::PrimPieces::UVCoordsPadded({static_cast<uint8_t>(uv.pos.x), static_cast<uint8_t>(uv.pos.y + uv.size.y)});
+    texQuad.primitive.uvD = psyqo::PrimPieces::UVCoordsPadded({static_cast<uint8_t>(uv.pos.x + uv.size.x), static_cast<uint8_t>(uv.pos.y + uv.size.y)});
     texQuad.primitive.setColor(color);
 
     m_orderingTables[m_parity].insert(texQuad, otEntry);
@@ -105,7 +140,7 @@ void Graphics::SetTpage(const Texture* texture, uint16_t otEntry)
     m_orderingTables[m_parity].insert(tpage, otEntry);
 }
 
-void Graphics::DrawSprite16x16(const Texture *texture, const psyqo::Vec2 pos, const psyqo::Rect &uv, uint16_t otEntry, psyqo::Color color)
+void Graphics::DrawSprite16x16(const Texture *texture, const psyqo::Vec2 pos, const psyqo::Rect uv, uint16_t otEntry, psyqo::Color color)
 {
     auto& sprite = m_primitiveBuffers[m_parity].allocateFragment<psyqo::Prim::Sprite16x16>();
     if (!texture)

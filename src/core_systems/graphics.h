@@ -16,10 +16,13 @@
     //#include "../player/player.h"
 // INFO: psyqo::Fragments::FixedFragment<psyqo::Prim::Sprite16x16, MAX_TILES>
 
-static constexpr uint16_t TPAGE_WIDTH = 64;
-static constexpr uint16_t TPAGE_HEIGHT = 256;
 
 class Camera2D;
+namespace mouli::graphics
+{
+static constexpr uint16_t SCREEN_WIDTH = 320;
+static constexpr uint16_t SCREEN_HEIGHT = 240;
+}
 
 class Graphics 
 {
@@ -34,16 +37,20 @@ public:
     void BeginFrame();
     void EndFrame();
     void SubmitOT();
+    // ^^^^^^ after
     // text drawing
     // send text
     void SetClearColor(psyqo::Color color);
     void SetActiveCamera(Camera2D* camera);
+    void SetActiveFont(Texture* tex);
     const Camera2D* ActiveCamera() const { return m_activeCamera; }
+    //void UploadFont()
+    void DrawText(const psyqo::Vec2 pos, const psyqo::Color color, const char* format, ...);
     psyqo::Vertex GetTextureUV(Texture* texture);
-    void DrawTexturedQuad(const Texture* texture, const psyqo::Vec2 pos, const psyqo::Vertex size, const psyqo::Rect& uv, uint16_t otEntry = 0, psyqo::Color color = {.r = 128, .g = 128, .b = 128});
+    void DrawTexturedQuad(const Texture* texture, const psyqo::Vec2 pos, const psyqo::Vertex size, const psyqo::Rect uv, uint16_t otEntry = 0, psyqo::Color color = {.r = 128, .g = 128, .b = 128});
     void SetTpage(const Texture* texture, uint16_t otEntry);
     // Sprites do not include TPage!
-    void DrawSprite16x16(const Texture* texture, const psyqo::Vec2 pos, const psyqo::Rect& uv, uint16_t otEntry = 0, psyqo::Color color = {.r = 128, .g = 128, .b = 128});
+    void DrawSprite16x16(const Texture* texture, const psyqo::Vec2 pos, const psyqo::Rect uv, uint16_t otEntry = 0, psyqo::Color color = {.r = 128, .g = 128, .b = 128});
 
 private:
     Graphics(psyqo::GPU& gpu);
@@ -52,6 +59,7 @@ private:
 
     psyqo::GPU& m_gpu;
     Camera2D* m_activeCamera = nullptr;
+    Texture* fontTexture;
 
     static constexpr uint16_t OT_SIZE = 10;
     static constexpr uint32_t PRIM_BUF_SIZE = 400000;
@@ -62,6 +70,7 @@ private:
 
     psyqo::Color clearColor = {52, 73, 235};
 
-
+    static constexpr uint16_t TPAGE_WIDTH = 64;
+    static constexpr uint16_t TPAGE_HEIGHT = 256;
 
 };

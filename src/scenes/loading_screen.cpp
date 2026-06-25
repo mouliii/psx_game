@@ -8,7 +8,6 @@ eastl::string loadDone("Loading...", 32);
 void LoadingScreenScene::start(Scene::StartReason reason)
 {
     syscall_puts("loading screen start()\n");
-    m_systemFont.uploadSystemFont(gpu());
 
     //m_texCoro = AssetManager::Instance().LoadTexture("AWESOME.TIM;1", gpu());
     m_loaderCoro = AssetManager::Instance().LoadLevel(AssetManager::Instance().filesToLoad, gpu());
@@ -20,21 +19,17 @@ void LoadingScreenScene::frame()
 {
     Graphics::Instance().BeginFrame();
 
-    txt = sprintf("Frame: %d", frameCounter);
-    m_systemFont.chainprint(gpu(), "testitesti", {16, 32}, {255,255,255});
-
+    Graphics::Instance().DrawText({16, 32}, {255,255,255}, "Frame: %d", frameCounter);
     frameCounter++;
-
     if (m_loaderCoro.done())
     {
         loadDone = "DONE !";
-        popScene();
-        
         Graphics::Instance().EndFrame();
+        popScene();
         return;
-        //pushScene(&menu);
     }
-    m_systemFont.chainprint(gpu(), loadDone.c_str(), {16, 64}, {255,255,255});
+    Graphics::Instance().DrawText({16, 64}, {255,255,255}, "Loading...");
+    
     Graphics::Instance().EndFrame();
 }
 

@@ -10,6 +10,10 @@
 #include "core_systems/asset_manager.h"
 #include "game_systems/camera.h"
 #include "scenes/game_scene.h"
+#include "scenes/loading_screen.h"
+
+class GameScene;
+class LoadingScreenScene;
 
 class MainMenuScene: public psyqo::Scene
 {
@@ -18,11 +22,14 @@ class MainMenuScene: public psyqo::Scene
     void teardown(Scene::TearDownReason reason) override;
     void Draw();
     void Update();
+    void ButtonEvents(const psyqo::AdvancedPad::Event& event);
 public:
     Camera2D camera = Camera2D({Camera2D::CAMERA_OFFSET.x,Camera2D::CAMERA_OFFSET.y});
-    psyqo::Font<32> m_systemFont;
-    psyqo::Prim::TexturedQuad bgLeft;
-    psyqo::Prim::TexturedQuad bgRight;
+    psyqo::Vec2 selectorPos{80,120};
+    psyqo::Vec2 firstRowPos{80,120};
+    int16_t menuIndex = 0;
+    int16_t lastPressedButton = 0;
     psyqo::AdvancedPad m_gamePad;
-    psyqo::Scene* gameScene;
+    GameScene* gameScene;
+    LoadingScreenScene* loadScene;
 };

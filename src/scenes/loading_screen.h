@@ -19,5 +19,4 @@ class LoadingScreenScene: public psyqo::Scene
 public:
     psyqo::Coroutine<> m_loaderCoro;
     psyqo::Coroutine<Texture*> m_texCoro;
-    psyqo::Font<> m_systemFont;
 };

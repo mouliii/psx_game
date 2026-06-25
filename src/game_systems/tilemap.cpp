@@ -73,8 +73,8 @@ void Tilemap::DrawBackground(Graphics &gfx, Camera2D* cam, int layer)
         //TODO: hardcoded values
         int16_t topLeftX = int16_t(((cam->pos.x.integer() - cam->CAMERA_OFFSET.x) / tileSize) - 1);
         int16_t topLeftY = int16_t(((cam->pos.y.integer() - cam->CAMERA_OFFSET.y) / tileSize) - 1);
-        int16_t topRightX = eastl::clamp(int16_t(topLeftX   + (320/16) + 2), (int16_t)0, int16_t(mapWidth));
-        int16_t bottomLeftY = eastl::clamp(int16_t(topLeftY + (240/16) + 2), (int16_t)0, int16_t(mapHeight));
+        int16_t topRightX = eastl::clamp(int16_t(topLeftX   + (mouli::graphics::SCREEN_WIDTH / tileSize) + 2), (int16_t)0, int16_t(mapWidth));
+        int16_t bottomLeftY = eastl::clamp(int16_t(topLeftY + (mouli::graphics::SCREEN_HEIGHT / tileSize) + 2), (int16_t)0, int16_t(mapHeight));
         topLeftX = eastl::max((int16_t)0, topLeftX);
         topLeftY = eastl::max((int16_t)0, topLeftY);
 

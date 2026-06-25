@@ -122,6 +122,8 @@
 			<file name="BGRIGHT.TIM" type="data" source="textures/menu_bg_right.tim"/>
 			<file name="ARCHER.TIM" type="data" source="textures/archer.tim"/>
 			<file name="TILEMAP.TIM" type="data" source="textures/tile_atlas.tim"/>
+			<file name="SPRITES.TIM" type="data" source="textures/psx_sprites.tim"/>
+			<file name="FONT.TIM" type="data" source="textures/minecraft_text.tim"/>
 			<file name="MAP1.MAP" type="data" source="data/MAP1.MAP"/>
 			<!-- max 15 filua root -->
 			<!-- <dir>

@@ -30,10 +30,24 @@ void Animation::Update()
     }
 }
 
+void Animation::PauseAnimation()
+{
+    paused = true;
+}
+
+void Animation::ResumeAnimation()
+{
+    paused = false;
+}
+
 void Animation::ReverseAnimation()
 {
 }
-
+psyqo::Rect &Animation::GetFrame()
+{
+    return frames[curFrame];
+}
+// not work for Sprite
 void Animation::InvertX(psyqo::Rect &rect)
 {
     rect.pos.x += frameWidth;

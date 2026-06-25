@@ -17,22 +17,25 @@ class RootScene: public psyqo::Scene
         switch (reason)
         {
         case StartReason::Create:
+        {
             syscall_puts("initilaizing systems...\n");
             CdRomLoader::Initialize();
             AssetManager::Initialize();
             Graphics::Initialize(gpu());
             syscall_puts("done.\n");
-            
-            mainMenu = new MainMenuScene();
-            loadingScreen = new LoadingScreenScene();
-
-            AssetManager::Instance().filesToLoad = {"AWESOME.TIM;1", "BGLEFT.TIM;1", "BGRIGHT.TIM;1", "ARCHER.TIM;1", "TILEMAP.TIM;1", "MAP1.MAP;1"};
-            pushScene(loadingScreen);
+            // load font
+            AssetManager::Instance().filesToLoad = {"FONT.TIM;1"};
+            m_coro = AssetManager::Instance().LoadLevel(AssetManager::Instance().filesToLoad, gpu());
+            m_coro.resume();
         break;
+        }
         case StartReason::Resume:
+        {
             delete loadingScreen;
+            mainMenu = new MainMenuScene();
             pushScene(mainMenu);
         break;
+        }
         default:
             break;
         }
@@ -40,6 +43,14 @@ class RootScene: public psyqo::Scene
 
     void frame() override
     {
+        if (m_coro.done())
+        {
+            Graphics::Instance().SetActiveFont(AssetManager::Instance().GetTexture("FONT.TIM;1", gpu()));
+            loadingScreen = new LoadingScreenScene();
+            AssetManager::Instance().filesToLoad = {"AWESOME.TIM;1", "BGLEFT.TIM;1", "BGRIGHT.TIM;1", "SPRITES.TIM;1"};
+            pushScene(loadingScreen);
+        }
+        
     }
 
     void teardown(Scene::TearDownReason reason) override
@@ -52,6 +63,7 @@ class RootScene: public psyqo::Scene
 private:
     MainMenuScene* mainMenu;
     LoadingScreenScene* loadingScreen;
+    psyqo::Coroutine<> m_coro;
 };
 
 class App : public psyqo::Application

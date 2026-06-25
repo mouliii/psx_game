@@ -43,5 +43,25 @@
                 <transparency_mode>0</transparency_mode>
             </import_parameters>
         </tim>
+        <tim file="minecraft_text.tim" source="minecraft_font.png">
+            <import_parameters>
+                <target_bpp>4</target_bpp>
+                <dithering>0</dithering>
+                <quantize_mode>0</quantize_mode>
+                <set_color_stp>0</set_color_stp>
+                <set_black_stp>0</set_black_stp>
+                <transparency_mode>0</transparency_mode>
+            </import_parameters>
+        </tim>
+        <tim file="psx_sprites.tim" source="psx_sprites.png">
+            <import_parameters>
+                <target_bpp>8</target_bpp>
+                <dithering>0</dithering>
+                <quantize_mode>0</quantize_mode>
+                <set_color_stp>0</set_color_stp>
+                <set_black_stp>0</set_black_stp>
+                <transparency_mode>0</transparency_mode>
+            </import_parameters>
+        </tim>
     </tim_group>
 </tim_project>
