@@ -1,4 +1,5 @@
 #include "graphics.h"
+#include "trig.h"
 
 Graphics* Graphics::m_instance = nullptr;
 
@@ -160,4 +161,38 @@ void Graphics::DrawSprite16x16(const Texture *texture, const psyqo::Vec2 pos, co
     sprite.primitive.setColor(color);
 
     m_orderingTables[m_parity].insert(sprite, otEntry);
+}
+
+void Graphics::DrawLine(const psyqo::Vec2 start, const psyqo::Vec2 end, psyqo::Color color, uint16_t otEntry)
+{
+    auto& line = m_primitiveBuffers[m_parity].allocateFragment<psyqo::Prim::Line>();
+    line.primitive.pointA = {(int16_t)start.x.integer(), (int16_t)start.y.integer()};
+    line.primitive.pointB = {(int16_t)end.x.integer(),   (int16_t)end.y.integer()};
+    line.primitive.setColor(color);
+
+    m_orderingTables[m_parity].insert(line, otEntry);
+}
+
+void Graphics::DrawCircle(const psyqo::Vec2 pos, const uint16_t radius, const uint16_t segments, psyqo::Color color, uint16_t otEntry)
+{
+    using namespace psyqo::trig_literals;
+    psyqo::Vec2 prevPos;
+    psyqo::Angle step = 2.0_pi / segments;
+    //
+    prevPos.x = pos.x + (mouli::trig.cos(0.0_pi) * radius);
+    prevPos.y = pos.y + (mouli::trig.sin(0.0_pi) * radius);
+    //
+    for (int i = 1; i <= segments; ++i)
+    {
+        psyqo::Angle angle = step * i;
+
+        psyqo::Vec2 nextPos;
+        nextPos.x = pos.x + (mouli::trig.cos(angle) * radius);
+        nextPos.y = pos.y + (mouli::trig.sin(angle) * radius);
+
+        DrawLine(prevPos, nextPos, color, otEntry);
+
+        prevPos = nextPos;
+    }
+    
 }

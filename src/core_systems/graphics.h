@@ -37,9 +37,6 @@ public:
     void BeginFrame();
     void EndFrame();
     void SubmitOT();
-    // ^^^^^^ after
-    // text drawing
-    // send text
     void SetClearColor(psyqo::Color color);
     void SetActiveCamera(Camera2D* camera);
     void SetActiveFont(Texture* tex);
@@ -51,7 +48,8 @@ public:
     void SetTpage(const Texture* texture, uint16_t otEntry);
     // Sprites do not include TPage!
     void DrawSprite16x16(const Texture* texture, const psyqo::Vec2 pos, const psyqo::Rect uv, uint16_t otEntry = 0, psyqo::Color color = {.r = 128, .g = 128, .b = 128});
-
+    void DrawLine(const psyqo::Vec2 start, const psyqo::Vec2 end, psyqo::Color color = {.r = 255, .g = 255, .b = 255}, uint16_t otEntry = 0);
+    void DrawCircle(const psyqo::Vec2 pos, const uint16_t radius, const uint16_t segments, psyqo::Color color = {.r = 255, .g = 255, .b = 255}, uint16_t otEntry = 0);
 private:
     Graphics(psyqo::GPU& gpu);
     ~Graphics() = default;

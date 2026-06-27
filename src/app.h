@@ -9,6 +9,7 @@
 #include "core_systems/cdrom_loader.h"
 #include "core_systems/asset_manager.h"
 #include "core_systems/graphics.h"
+#include "core_systems/gamepad.h"
 
 class RootScene: public psyqo::Scene
 {
@@ -18,11 +19,6 @@ class RootScene: public psyqo::Scene
         {
         case StartReason::Create:
         {
-            syscall_puts("initilaizing systems...\n");
-            CdRomLoader::Initialize();
-            AssetManager::Initialize();
-            Graphics::Initialize(gpu());
-            syscall_puts("done.\n");
             // load font
             AssetManager::Instance().filesToLoad = {"FONT.TIM;1"};
             m_coro = AssetManager::Instance().LoadLevel(AssetManager::Instance().filesToLoad, gpu());
@@ -76,6 +72,11 @@ class App : public psyqo::Application
         .set(psyqo::GPU::ColorMode::C15BITS)
         .set(psyqo::GPU::Interlace::PROGRESSIVE);
         gpu().initialize(config);
+
+        CdRomLoader::Initialize();
+        Graphics::Initialize(gpu());
+        Gamepad::Initialize(psyqo::AdvancedPad::PollingMode::Fast);
+        AssetManager::Initialize();
     }
     void createScene() override
     {

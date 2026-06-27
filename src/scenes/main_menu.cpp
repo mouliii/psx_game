@@ -11,8 +11,7 @@ void MainMenuScene::start(Scene::StartReason reason)
         {
             //Graphics::Instance().SetActiveFont(AssetManager::Instance().GetTexture("FONT.TIM;1", gpu()));
             Graphics::Instance().SetActiveCamera(&camera);
-            m_gamePad.initialize(psyqo::AdvancedPad::PollingMode::Normal);
-            m_gamePad.setOnEvent([this](psyqo::AdvancedPad::Event event)
+            Gamepad::Instance().GetGamepad().setOnEvent([this](psyqo::AdvancedPad::Event event)
             {
                 ButtonEvents(event);
             });
@@ -48,16 +47,31 @@ void MainMenuScene::Draw()
 {
     Graphics::Instance().DrawTexturedQuad(AssetManager::Instance().GetTexture("BGLEFT.TIM;1", gpu()),  {0,0},   {160,240}, {{0,0},{160,240}}, 4);
     Graphics::Instance().DrawTexturedQuad(AssetManager::Instance().GetTexture("BGRIGHT.TIM;1", gpu()), {160,0}, {160,240}, {{0,0},{160,240}}, 4);
+    const psyqo::Vec2 bannerPos = {63,50};
+    // banner left
+    Graphics::Instance().DrawTexturedQuad(AssetManager::Instance().GetTexture("SPRITES.TIM;1", gpu()), {bannerPos.x, bannerPos.y}, {32,32}, {{0,6*16},{32,32}}, 3);
+    // banner mid
+    Graphics::Instance().DrawTexturedQuad(AssetManager::Instance().GetTexture("SPRITES.TIM;1", gpu()), {bannerPos.x + 32, bannerPos.y}, {32,32}, {{2*16,6*16},{32,32}}, 3);
+    Graphics::Instance().DrawTexturedQuad(AssetManager::Instance().GetTexture("SPRITES.TIM;1", gpu()), {bannerPos.x + 64, bannerPos.y}, {32,32}, {{2*16,6*16},{32,32}}, 3);
+    Graphics::Instance().DrawTexturedQuad(AssetManager::Instance().GetTexture("SPRITES.TIM;1", gpu()), {bannerPos.x + 96, bannerPos.y}, {32,32}, {{2*16,6*16},{32,32}}, 3);
+    Graphics::Instance().DrawTexturedQuad(AssetManager::Instance().GetTexture("SPRITES.TIM;1", gpu()), {bannerPos.x + 128, bannerPos.y}, {32,32}, {{2*16,6*16},{32,32}}, 3);
+    // banner right
+    Graphics::Instance().DrawTexturedQuad(AssetManager::Instance().GetTexture("SPRITES.TIM;1", gpu()), {bannerPos.x + 160, bannerPos.y}, {32,32}, {{4*16,6*16},{32,32}}, 3);
+    // game name
+    Graphics::Instance().DrawText({bannerPos.x + 24, bannerPos.y + 8}, {255,255,255}, "GAME NAME: The game");
+
     auto* tex = AssetManager::Instance().GetTexture("AWESOME.TIM;1", gpu());
     auto uv = Graphics::Instance().GetTextureUV(tex);
     Graphics::Instance().DrawTexturedQuad(tex, selectorPos, {16,16}, {uv,{64,64}}, 3);
     Graphics::Instance().DrawText({firstRowPos.x + 20, firstRowPos.y},      {20,5,255}, "Play");
     Graphics::Instance().DrawText({firstRowPos.x + 20, firstRowPos.y + 16}, {20,5,255}, "Settings");
     Graphics::Instance().DrawText({firstRowPos.x + 20, firstRowPos.y + 32}, {20,5,255}, "\\_(-.-)_/");
+    
 }
 
 void MainMenuScene::Update()
 {
+    
 }
 
 void MainMenuScene::ButtonEvents(const psyqo::AdvancedPad::Event& event)
@@ -70,7 +84,7 @@ void MainMenuScene::ButtonEvents(const psyqo::AdvancedPad::Event& event)
             case psyqo::AdvancedPad::Cross:
                 if (menuIndex == 0)
                 {
-                    m_gamePad.setOnEvent(nullptr);
+                    Gamepad::Instance().GetGamepad().setOnEvent(nullptr);
                     AssetManager::Instance().filesToLoad = {"ARCHER.TIM;1", "TILEMAP.TIM;1", "MAP1.MAP;1", "SPRITES.TIM;1"};
                     loadScene = new LoadingScreenScene();
                     pushScene(loadScene);

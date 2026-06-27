@@ -2,7 +2,6 @@
 
 void GameScene::start(Scene::StartReason reason)
 {
-    m_gamePad.initialize(psyqo::AdvancedPad::PollingMode::Normal);
     Graphics::Instance().SetActiveCamera(&camera);
     Graphics::Instance().SetActiveFont(AssetManager::Instance().GetTexture("FONT.TIM;1", gpu()));
     period = 1'000'000;
@@ -71,7 +70,7 @@ void GameScene::Draw()
 
 void GameScene::Update()
 {
-    player.Update(m_gamePad);
+    player.Update(Gamepad::Instance().GetGamepad());
     camera.pos = player.pos;
 
     for (Enemy& e : enemies)
@@ -137,14 +136,15 @@ void GameScene::SpawnNewEnemies()
     }
     // randomize which side then offset
     // or circle
+    //using namespace psyqo::trig_literals; //2.0_pi
     int32_t fixedNumber = (mouli::random::GetRandom() % 4096) * 2 - 4096;
     int32_t wholePart = fixedNumber >> 12;
     int32_t fracPart = fixedNumber & 0xfff;
     psyqo::FixedPoint<> pi(wholePart, fracPart);
     psyqo::Angle angle(pi);
     psyqo::Vec2 pos;
-    pos.x = trig.cos(angle) * mouli::graphics::SCREEN_WIDTH / 2;
-    pos.y = trig.sin(angle) * mouli::graphics::SCREEN_WIDTH / 2;
+    pos.x = mouli::trig.cos(angle) * mouli::graphics::SCREEN_WIDTH / 2;
+    pos.y = mouli::trig.sin(angle) * mouli::graphics::SCREEN_WIDTH / 2;
     pos += player.pos;
     newEnemy.SetPosition(pos);
     enemies.push_back(newEnemy);

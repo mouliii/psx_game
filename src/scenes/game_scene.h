@@ -8,11 +8,12 @@
 #include "psyqo/primitives.hh"
 #include "psyqo/task.hh"
 #include "psyqo/fragments.hh"
-#include "psyqo/advancedpad.hh"
-#include "psyqo/trigonometry.hh"
+//#include "psyqo/trigonometry.hh"
+#include "core_systems/trig.h"
 
 #include "core_systems/graphics.h"
 #include "core_systems/asset_manager.h"
+#include "core_systems/gamepad.h"
 #include "game_systems/camera.h"
 #include "game_systems/tilemap.h"
 #include "entities/player.h"
@@ -32,8 +33,7 @@ public:
     Player player;
     eastl::vector<Enemy> enemies;
     Tilemap* tilemap;
-    psyqo::AdvancedPad m_gamePad;
     unsigned timer;
     uint32_t period;
-    psyqo::Trig<> trig;
+    //psyqo::Trig<> trig;
 };
