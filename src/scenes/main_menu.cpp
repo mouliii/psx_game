@@ -3,8 +3,24 @@
 #include "psyqo/alloc.h"
 #include "EASTL/memory.h"
 
+MainMenuScene::MainMenuScene()
+    : mainMenu("root"), subMenu("Sub menu")
+{
+    mainMenu.pos = {95+20,120};
+    mainMenu.AddItem("Play", [this](){StartGame();}, nullptr);
+    mainMenu.AddItem("Sub menu", {}, &subMenu);
+    subMenu.pos = {95+20,120};
+    subMenu.AddItem("Controller test", {}, nullptr);
+    subMenu.AddItem("Sub menu 2", {}, nullptr);
+    menuStack.push_back(&mainMenu);
+}
+
 void MainMenuScene::start(Scene::StartReason reason)
 {
+    selectorPos = {95,120};
+    firstRowPos = {95+20,120};
+    menuIndex = 0;
+    nMenuElements = 2;
     switch (reason)
     {
         case StartReason::Create:
@@ -62,67 +78,107 @@ void MainMenuScene::Draw()
 
     auto* tex = AssetManager::Instance().GetTexture("AWESOME.TIM;1", gpu());
     auto uv = Graphics::Instance().GetTextureUV(tex);
+    selectorPos = menuStack.back()->GetSelectedPosition();
+    selectorPos.x -= 20;
     Graphics::Instance().DrawTexturedQuad(tex, selectorPos, {16,16}, {uv,{64,64}}, 3);
-    Graphics::Instance().DrawText({firstRowPos.x + 20, firstRowPos.y},      {20,5,255}, "Play");
-    Graphics::Instance().DrawText({firstRowPos.x + 20, firstRowPos.y + 16}, {20,5,255}, "Settings");
-    Graphics::Instance().DrawText({firstRowPos.x + 20, firstRowPos.y + 32}, {20,5,255}, "\\_(-.-)_/");
-    
+
+    menuStack.back()->Draw();
 }
 
 void MainMenuScene::Update()
 {
-    
+}
+
+void MainMenuScene::StartGame()
+{
+    printf("start game\n");
+    Gamepad::Instance().GetGamepad().setOnEvent(nullptr);
+    AssetManager::Instance().filesToLoad = {"ARCHER.TIM;1", "TILEMAP.TIM;1", "MAP1.MAP;1", "SPRITES.TIM;1"};
+    loadScene = new LoadingScreenScene();
+    pushScene(loadScene);
 }
 
 void MainMenuScene::ButtonEvents(const psyqo::AdvancedPad::Event& event)
 {
-    switch (event.type)
+    auto action = menuStack.back()->Update(event);
+    switch (action)
     {
-    case psyqo::AdvancedPad::Event::ButtonPressed:
-        switch (event.button)
+    case MenuAction::ACTION:
+        // executed in menu object
+        break;
+    case MenuAction::PUSH:
+        menuStack.push_back(menuStack.back()->GetSelectedMenu());
+        break;
+    case MenuAction::POP:
+        if (menuStack.size() > 1)
         {
-            case psyqo::AdvancedPad::Cross:
-                if (menuIndex == 0)
-                {
-                    Gamepad::Instance().GetGamepad().setOnEvent(nullptr);
-                    AssetManager::Instance().filesToLoad = {"ARCHER.TIM;1", "TILEMAP.TIM;1", "MAP1.MAP;1", "SPRITES.TIM;1"};
-                    loadScene = new LoadingScreenScene();
-                    pushScene(loadScene);
-                }
-            break;
-
-            case psyqo::AdvancedPad::Down:
-                selectorPos.y += 16;
-                if (++menuIndex > 2)
-                {
-                    menuIndex = 0;
-                    selectorPos.y = firstRowPos.y;
-                }
-            break;
-
-            case psyqo::AdvancedPad::Up:
-                selectorPos.y -= 16;
-                if (--menuIndex < 0)
-                {
-                    menuIndex = 2;
-                    selectorPos.y = firstRowPos.y + 2 * 16;
-                }
-            break;
+            menuStack.pop_back();
         }
         break;
-    break;
-    case psyqo::AdvancedPad::Event::ButtonReleased:
-        
+    case MenuAction::NONE:
+        /* code */
         break;
-    case psyqo::AdvancedPad::Event::PadConnected:
-        
-        break;
-    case psyqo::AdvancedPad::Event::PadDisconnected:
-        
-        break;
-    
     default:
         break;
     }
+    
+    //switch (event.type)
+    //{
+    //case psyqo::AdvancedPad::Event::ButtonPressed:
+    //    switch (event.button)
+    //    {
+    //        case psyqo::AdvancedPad::Cross:
+    //        {
+    //            if (menuIndex == 0)
+    //            {
+    //                Gamepad::Instance().GetGamepad().setOnEvent(nullptr);
+    //                AssetManager::Instance().filesToLoad = {"ARCHER.TIM;1", "TILEMAP.TIM;1", "MAP1.MAP;1", "SPRITES.TIM;1"};
+    //                loadScene = new LoadingScreenScene();
+    //                pushScene(loadScene);
+    //            }
+    //            else if (menuIndex == 1)
+    //            {
+//
+    //            }
+    //        }
+    //        case psyqo::AdvancedPad::Triangle:
+    //        {
+//
+    //        }
+    //        break;
+//
+    //        case psyqo::AdvancedPad::Down:
+    //            selectorPos.y += rowSeparateValue;
+    //            if (++menuIndex > nMenuElements)
+    //            {
+    //                menuIndex = 0;
+    //                selectorPos.y = firstRowPos.y;
+    //            }
+    //        break;
+//
+    //        case psyqo::AdvancedPad::Up:
+    //            selectorPos.y -= rowSeparateValue;
+    //            if (--menuIndex < 0)
+    //            {
+    //                menuIndex = nMenuElements;
+    //                selectorPos.y = firstRowPos.y + nMenuElements * rowSeparateValue;
+    //            }
+    //        break;
+    //    }
+    //    break;
+    //break;
+    //case psyqo::AdvancedPad::Event::ButtonReleased:
+    //    
+    //    break;
+    //case psyqo::AdvancedPad::Event::PadConnected:
+    //    
+    //    break;
+    //case psyqo::AdvancedPad::Event::PadDisconnected:
+    //    
+    //    break;
+    //
+    //default:
+    //    break;
+    //}
     
 }
