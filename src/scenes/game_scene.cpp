@@ -2,9 +2,12 @@
 
 void GameScene::start(Scene::StartReason reason)
 {
+    using namespace psyqo::timer_literals;
     Graphics::Instance().SetActiveCamera(&camera);
     Graphics::Instance().SetActiveFont(AssetManager::Instance().GetTexture("FONT.TIM;1", gpu()));
-    period = 1'000'000;
+    Gamepad::Instance().GetGamepad().setOnEvent([this](const psyqo::AdvancedPad::Event& event){InputEvents(event);});
+
+    period = 1_s;
     timer = gpu().armPeriodicTimer(period, [this](uint32_t) { SpawnNewEnemies(); });
     mouli::random::rngSeed = gpu().now();
 
@@ -39,6 +42,7 @@ void GameScene::frame()
 
 void GameScene::teardown(Scene::TearDownReason reason)
 {
+    Gamepad::Instance().GetGamepad().setOnEvent(nullptr);
     switch (reason)
     {
     case TearDownReason::Pause:
@@ -70,13 +74,17 @@ void GameScene::Draw()
 
 void GameScene::Update()
 {
-    player.Update(Gamepad::Instance().GetGamepad());
+    player.Update();
     camera.pos = player.pos;
 
     for (Enemy& e : enemies)
     {
         e.Update(player.pos);
     }
+}
+
+void GameScene::InputEvents(const psyqo::AdvancedPad::Event &event)
+{
 }
 
 void GameScene::SpawnNewEnemies()

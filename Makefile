@@ -6,7 +6,7 @@ CXXFLAGS += -I./src
 SRCS := $(wildcard src/*.cpp) \
         $(wildcard src/core_systems/*.cpp) \
         $(wildcard src/game_systems/*.cpp) \
-        $(wildcard src/entities/*.cpp) \
+        $(wildcard src/game_objects/*.cpp) \
         $(wildcard src/scenes/*.cpp) \
 		third_party/nugget/psyqo-paths/src/cdrom-loader.cpp
 

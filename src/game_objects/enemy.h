@@ -12,7 +12,7 @@
 #include "core_systems/asset_manager.h"
 #include "core_systems/graphics.h"
 #include "game_systems/animation.h"
-#include "entities/character.h"
+#include "game_objects/character.h"
 
 class Enemy : public Character
 {

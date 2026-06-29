@@ -2,7 +2,7 @@
 
 #include "scenes/main_menu.h"
 
-class SettingsMenu: public psyqo::Scene
+class ControllerTestScene: public psyqo::Scene
 {
     void start(Scene::StartReason reason) override;
     void frame() override;

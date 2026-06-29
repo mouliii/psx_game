@@ -105,6 +105,7 @@ void Graphics::DrawTexturedQuad(const Texture *texture, const psyqo::Vec2 pos, c
         syscall_puts("TEXTURE IS NULL !!\n");
         return;
     }
+    //TODO: Create function vvv
     const int16_t screenX = static_cast<int16_t>((pos.x - m_activeCamera->pos.x).integer() + m_activeCamera->CAMERA_OFFSET.x);
     const int16_t screenY = static_cast<int16_t>((pos.y - m_activeCamera->pos.y).integer() + m_activeCamera->CAMERA_OFFSET.y);
 

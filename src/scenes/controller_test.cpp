@@ -1,6 +1,6 @@
-#include "settings_menu.h"
+#include "controller_test.h"
 
-void SettingsMenu::start(Scene::StartReason reason)
+void ControllerTestScene::start(Scene::StartReason reason)
 {
     m_gamePad.initialize(psyqo::AdvancedPad::PollingMode::Normal);
     m_gamePad.setOnEvent([this](psyqo::AdvancedPad::Event event)
@@ -9,23 +9,23 @@ void SettingsMenu::start(Scene::StartReason reason)
     });
 }
 
-void SettingsMenu::frame()
+void ControllerTestScene::frame()
 {
 }
 
-void SettingsMenu::teardown(Scene::TearDownReason reason)
+void ControllerTestScene::teardown(Scene::TearDownReason reason)
 {
 }
 
-void SettingsMenu::Draw()
+void ControllerTestScene::Draw()
 {
 }
 
-void SettingsMenu::Update()
+void ControllerTestScene::Update()
 {
 }
 
-void SettingsMenu::ButtonEvents(const psyqo::AdvancedPad::Event &event)
+void ControllerTestScene::ButtonEvents(const psyqo::AdvancedPad::Event &event)
 {
     using pad_type = psyqo::AdvancedPad::PadType;
     switch (m_gamePad.getPadType(psyqo::AdvancedPad::Pad::Pad1a))

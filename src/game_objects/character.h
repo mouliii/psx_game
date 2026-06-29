@@ -28,7 +28,7 @@ public:
     Character() = default;
     virtual ~Character();
     void Initialize(Texture* tex, const psyqo::Vec2 pos, const psyqo::Vertex size, const Animation anim, const Stats& stats );
-    virtual void Update(psyqo::AdvancedPad& pad);
+    virtual void Update();
     virtual void Draw(Graphics& gfx, int layer = 3) = 0;
     // TODO: projectile
     virtual void Attack(Character* character) = 0;

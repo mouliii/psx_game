@@ -16,8 +16,8 @@
 #include "core_systems/gamepad.h"
 #include "game_systems/camera.h"
 #include "game_systems/tilemap.h"
-#include "entities/player.h"
-#include "entities/enemy.h"
+#include "game_objects/player.h"
+#include "game_objects/enemy.h"
 #include "core_systems/rng.h"
 
 class GameScene: public psyqo::Scene
@@ -27,6 +27,7 @@ class GameScene: public psyqo::Scene
     void teardown(Scene::TearDownReason reason) override;
     void Draw();
     void Update();
+    void InputEvents(const psyqo::AdvancedPad::Event& event);
     void SpawnNewEnemies();
 public:
     Camera2D camera = Camera2D({Camera2D::CAMERA_OFFSET.x,Camera2D::CAMERA_OFFSET.y});
@@ -35,5 +36,4 @@ public:
     Tilemap* tilemap;
     unsigned timer;
     uint32_t period;
-    //psyqo::Trig<> trig;
 };

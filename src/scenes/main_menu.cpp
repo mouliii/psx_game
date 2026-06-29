@@ -56,6 +56,7 @@ void MainMenuScene::frame()
 
 void MainMenuScene::teardown(Scene::TearDownReason reason)
 {
+    Gamepad::Instance().GetGamepad().setOnEvent(nullptr);
 }
 
 
@@ -91,8 +92,6 @@ void MainMenuScene::Update()
 
 void MainMenuScene::StartGame()
 {
-    printf("start game\n");
-    Gamepad::Instance().GetGamepad().setOnEvent(nullptr);
     AssetManager::Instance().filesToLoad = {"ARCHER.TIM;1", "TILEMAP.TIM;1", "MAP1.MAP;1", "SPRITES.TIM;1"};
     loadScene = new LoadingScreenScene();
     pushScene(loadScene);

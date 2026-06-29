@@ -12,7 +12,7 @@ void Character::Initialize(Texture *tex, const psyqo::Vec2 pos, const psyqo::Ver
     this->stats = stats;
 }
 
-void Character::Update(psyqo::AdvancedPad &pad)
+void Character::Update()
 {
 }
 
