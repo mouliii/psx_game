@@ -16,7 +16,7 @@ void Character::Update()
 {
 }
 
-void Character::Draw(Graphics &gfx, int layer)
+void Character::Draw(int layer)
 {
 }
 

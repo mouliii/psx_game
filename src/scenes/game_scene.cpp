@@ -15,8 +15,15 @@ void GameScene::start(Scene::StartReason reason)
     psyqo::Vertex playerUV = Graphics::Instance().GetTextureUV(playerTex);
     Animation anim{(uint16_t)playerUV.x, (uint16_t)playerUV.y, 16, 16, 4, 5};
     player.Initialize(playerTex, {100,150}, {16,16}, anim, {.health = 100, .damage = 10, .speed = 1.5});
+    player.scene = this;
+    Projectile proj;
+    Animation projAnim{8*16, 0, 16, 16, 2, 3 };
+    proj.Setup(AssetManager::Instance().GetTexture("SPRITES.TIM;1", gpu()), {0,0}, {0,0}, {16,16}, projAnim, {.health = 100, .damage = 10, .speed = 2.0}, 150, 1);
+    player.SetupProjectile(proj);
+
     tilemap = new Tilemap(AssetManager::Instance().GetTexture("TILEMAP.TIM;1", gpu()), AssetManager::Instance().dataStore);
     enemies.reserve(100);
+    projectiles.reserve(100);
 }
 
 // #define MEASURE_PERFORMANCE
@@ -62,11 +69,15 @@ void GameScene::Draw()
     static uint8_t rValue = 0;
     Graphics::Instance().DrawText({camera.pos.x - mouli::graphics::SCREEN_WIDTH / 2 + 10, camera.pos.y - mouli::graphics::SCREEN_HEIGHT / 2 + 10}, psyqo::Color{rValue,255,255}, "Fixed text");
     rValue++;
+    for (Projectile& p : projectiles)
+    {
+        p.Draw(3);
+    }
     for (Enemy& e : enemies)
     {
-        e.Draw(Graphics::Instance(), 3);
+        e.Draw(3);
     }
-    player.Draw(Graphics::Instance(), 3);
+    player.Draw(3);
     tilemap->DrawForeground(Graphics::Instance(), &camera, 2);
     tilemap->DrawBackground(Graphics::Instance(), &camera);
     Graphics::Instance().SubmitOT();
@@ -80,6 +91,10 @@ void GameScene::Update()
     for (Enemy& e : enemies)
     {
         e.Update(player.pos);
+    }
+    for (Projectile& p : projectiles)
+    {
+        p.Update();
     }
 }
 
@@ -96,6 +111,7 @@ void GameScene::SpawnNewEnemies()
     int16_t randEnemy = mouli::random::GetRandom() % 4;
     Enemy newEnemy;
     Texture* tex = AssetManager::Instance().GetTexture("SPRITES.TIM;1", gpu());
+    newEnemy.scene = this;
     
     psyqo::Kernel::assert(tex != nullptr, "Texture is null pointer at create new enemy");
 
@@ -158,4 +174,7 @@ void GameScene::SpawnNewEnemies()
     enemies.push_back(newEnemy);
 }
 
-
+void GameScene::SpawnProjectile(const Projectile projectile)
+{
+    projectiles.push_back(projectile);
+}

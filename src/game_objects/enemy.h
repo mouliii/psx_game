@@ -20,7 +20,7 @@ public:
     Enemy();
     ~Enemy();
     void Update(const psyqo::Vec2& target);
-    void Draw(Graphics& gfx, int layer = 3) override;
+    void Draw(int layer) override;
     // TODO: projectile
     void Attack(Character* character) override;
     void TakeDamage(int16_t amount) override;

@@ -18,10 +18,12 @@
 #include "game_systems/tilemap.h"
 #include "game_objects/player.h"
 #include "game_objects/enemy.h"
+#include "game_objects/projectile.h"
 #include "core_systems/rng.h"
 
 class GameScene: public psyqo::Scene
 {
+public:
     void start(Scene::StartReason reason) override;
     void frame() override;
     void teardown(Scene::TearDownReason reason) override;
@@ -29,10 +31,12 @@ class GameScene: public psyqo::Scene
     void Update();
     void InputEvents(const psyqo::AdvancedPad::Event& event);
     void SpawnNewEnemies();
-public:
+    void SpawnProjectile(const Projectile projectile);
+private:
     Camera2D camera = Camera2D({Camera2D::CAMERA_OFFSET.x,Camera2D::CAMERA_OFFSET.y});
     Player player;
     eastl::vector<Enemy> enemies;
+    eastl::vector<Projectile> projectiles;
     Tilemap* tilemap;
     unsigned timer;
     uint32_t period;

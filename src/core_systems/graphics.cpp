@@ -51,6 +51,12 @@ void Graphics::SetActiveFont(Texture *tex)
 {
     fontTexture = tex;
 }
+const psyqo::Vertex Graphics::GetScreenCoords(const psyqo::Vec2 pos)
+{
+    const int16_t screenX = static_cast<int16_t>((pos.x - m_activeCamera->pos.x).integer() + m_activeCamera->CAMERA_OFFSET.x);
+    const int16_t screenY = static_cast<int16_t>((pos.y - m_activeCamera->pos.y).integer() + m_activeCamera->CAMERA_OFFSET.y);
+    return psyqo::Vertex({screenX, screenY});
+}
 void Graphics::DrawText(const psyqo::Vec2 pos, const psyqo::Color color, const char *format, ...)
 {
     char buffer[256];
@@ -129,6 +135,40 @@ void Graphics::DrawTexturedQuad(const Texture *texture, const psyqo::Vec2 pos, c
     m_orderingTables[m_parity].insert(texQuad, otEntry);
 }
 
+void Graphics::DrawTexturedQuad(const TexturedQuad &quad, uint16_t otEntry)
+{
+    auto& texQuad = m_primitiveBuffers[m_parity].allocateFragment<psyqo::Prim::TexturedQuad>();
+    psyqo::Kernel::assert(quad.texture != nullptr, "Texture is null pointer");
+    psyqo::Vertex screenPos = GetScreenCoords(quad.position);
+
+    psyqo::PrimPieces::ClutIndex clutIndex(quad.texture->clutX, quad.texture->clutY);
+    psyqo::PrimPieces::TPageAttr tPage;
+    tPage.setPageX(quad.texture->x / TPAGE_WIDTH);
+    tPage.setPageY(quad.texture->y / TPAGE_HEIGHT);
+    tPage.set(quad.texture->colorMode);
+    texQuad.primitive.clutIndex = clutIndex;
+    texQuad.primitive.tpage = tPage;
+    texQuad.primitive.pointA = {screenPos.x, screenPos.y};
+    texQuad.primitive.pointB = {static_cast<int16_t>(screenPos.x + quad.size.x), screenPos.y};
+    texQuad.primitive.pointC = {screenPos.x, static_cast<int16_t>(screenPos.y + quad.size.y)};
+    texQuad.primitive.pointD = {static_cast<int16_t>(screenPos.x + quad.size.x), static_cast<int16_t>(screenPos.y + quad.size.y)};
+    texQuad.primitive.uvA = psyqo::PrimPieces::UVCoords({static_cast<uint8_t>(quad.uv.pos.x), static_cast<uint8_t>(quad.uv.pos.y)});
+    texQuad.primitive.uvB = psyqo::PrimPieces::UVCoords({static_cast<uint8_t>(quad.uv.pos.x + quad.uv.size.x), static_cast<uint8_t>(quad.uv.pos.y)});
+    texQuad.primitive.uvC = psyqo::PrimPieces::UVCoordsPadded({static_cast<uint8_t>(quad.uv.pos.x), static_cast<uint8_t>(quad.uv.pos.y + quad.uv.size.y)});
+    texQuad.primitive.uvD = psyqo::PrimPieces::UVCoordsPadded({static_cast<uint8_t>(quad.uv.pos.x + quad.uv.size.x), static_cast<uint8_t>(quad.uv.pos.y + quad.uv.size.y)});
+    texQuad.primitive.setColor(quad.color);
+    psyqo::Vec2 pivotPos = {quad.position.x + quad.size.x / 2, quad.position.y + quad.size.y / 2};
+
+    if (quad.angle != 0)
+    {
+        //texQuad.primitive.pointA = mouli::RotatePoint(texQuad.primitive.pointA, pivotPos, quad.angle);
+        //texQuad.primitive.pointB = mouli::RotatePoint(texQuad.primitive.pointB, pivotPos, quad.angle);
+        //texQuad.primitive.pointC = mouli::RotatePoint(texQuad.primitive.pointC, pivotPos, quad.angle);
+        //texQuad.primitive.pointD = mouli::RotatePoint(texQuad.primitive.pointD, pivotPos, quad.angle);
+    }
+    m_orderingTables[m_parity].insert(texQuad, otEntry);
+}
+
 void Graphics::SetTpage(const Texture* texture, uint16_t otEntry)
 {
     auto& tpage = m_primitiveBuffers[m_parity].allocateFragment<psyqo::Prim::TPage>();
@@ -179,17 +219,18 @@ void Graphics::DrawCircle(const psyqo::Vec2 pos, const uint16_t radius, const ui
     using namespace psyqo::trig_literals;
     psyqo::Vec2 prevPos;
     psyqo::Angle step = 2.0_pi / segments;
+    auto screenPos = GetScreenCoords(pos);
     //
-    prevPos.x = pos.x + (mouli::trig.cos(0.0_pi) * radius);
-    prevPos.y = pos.y + (mouli::trig.sin(0.0_pi) * radius);
+    prevPos.x = screenPos.x + (mouli::trig.cos(0.0_pi) * radius);
+    prevPos.y = screenPos.y + (mouli::trig.sin(0.0_pi) * radius);
     //
     for (int i = 1; i <= segments; ++i)
     {
         psyqo::Angle angle = step * i;
 
         psyqo::Vec2 nextPos;
-        nextPos.x = pos.x + (mouli::trig.cos(angle) * radius);
-        nextPos.y = pos.y + (mouli::trig.sin(angle) * radius);
+        nextPos.x = screenPos.x + (mouli::trig.cos(angle) * radius);
+        nextPos.y = screenPos.y + (mouli::trig.sin(angle) * radius);
 
         DrawLine(prevPos, nextPos, color, otEntry);
 

@@ -12,6 +12,7 @@
     #include "psyqo/bump-allocator.hh"
     #include "asset_manager.h"
     #include "../game_systems/camera.h"
+    #include "core_systems/primitives/textured_quad.h"
 
     //#include "../player/player.h"
 // INFO: psyqo::Fragments::FixedFragment<psyqo::Prim::Sprite16x16, MAX_TILES>
@@ -41,10 +42,11 @@ public:
     void SetActiveCamera(Camera2D* camera);
     void SetActiveFont(Texture* tex);
     const Camera2D* ActiveCamera() const { return m_activeCamera; }
-    //void UploadFont()
+    const psyqo::Vertex GetScreenCoords(const psyqo::Vec2 pos);
     void DrawText(const psyqo::Vec2 pos, const psyqo::Color color, const char* format, ...);
     psyqo::Vertex GetTextureUV(Texture* texture);
     void DrawTexturedQuad(const Texture* texture, const psyqo::Vec2 pos, const psyqo::Vertex size, const psyqo::Rect uv, uint16_t otEntry = 0, psyqo::Color color = {.r = 128, .g = 128, .b = 128});
+    void DrawTexturedQuad(const TexturedQuad& quad, uint16_t otEntry);
     void SetTpage(const Texture* texture, uint16_t otEntry);
     // Sprites do not include TPage!
     void DrawSprite16x16(const Texture* texture, const psyqo::Vec2 pos, const psyqo::Rect uv, uint16_t otEntry = 0, psyqo::Color color = {.r = 128, .g = 128, .b = 128});

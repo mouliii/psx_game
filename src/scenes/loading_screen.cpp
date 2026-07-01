@@ -7,7 +7,7 @@ eastl::string loadDone("Loading...", 32);
 
 void LoadingScreenScene::start(Scene::StartReason reason)
 {
-    syscall_puts("loading screen start()\n");
+    //syscall_puts("loading screen start()\n");
 
     //m_texCoro = AssetManager::Instance().LoadTexture("AWESOME.TIM;1", gpu());
     m_loaderCoro = AssetManager::Instance().LoadLevel(AssetManager::Instance().filesToLoad, gpu());

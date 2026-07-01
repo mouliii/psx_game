@@ -1,13 +1,21 @@
 #include "enemy.h"
 
 Enemy::Enemy()
-{}
+{
+    group = Group::ENEMIES;
+    attackCooldown = 60;
+    currentCooldown = 0;
+}
 
 Enemy::~Enemy()
 {}
 
 void Enemy::Update(const psyqo::Vec2& target)
 {
+    if (currentCooldown > 0)
+    {
+        currentCooldown--;
+    }
     dir = {0,0};
     const psyqo::Vec2 deltaPos = target - pos;
     const int32_t distSq = deltaPos.x.integer() * deltaPos.x.integer() + deltaPos.y.integer() * deltaPos.y.integer();
@@ -34,7 +42,7 @@ void Enemy::Update(const psyqo::Vec2& target)
     anim.Update();
 }
 
-void Enemy::Draw(Graphics &gfx, int layer)
+void Enemy::Draw(int layer)
 {
     psyqo::Rect rect = anim.GetFrame();
     if (lastFacing < 0)
@@ -42,17 +50,22 @@ void Enemy::Draw(Graphics &gfx, int layer)
         anim.InvertX(rect);
     }
     
-    gfx.DrawTexturedQuad(tex, pos, size, rect, layer, color);
+    Graphics::Instance().DrawTexturedQuad(tex, pos, size, rect, layer, color);
 }
 
 void Enemy::Attack(Character* character)
 {
-    // melee
+    // if constexpr melee/ranged
     character->TakeDamage(stats.damage);
-    // ranged
+    currentCooldown = 60;
 }
 
 void Enemy::TakeDamage(int16_t amount)
 {
     stats.health -= amount;
+    if (stats.health <= 0)
+    {
+        alive = false;
+        stats.health = 0;
+    }
 }

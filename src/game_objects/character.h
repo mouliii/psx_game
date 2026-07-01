@@ -10,9 +10,10 @@
 #include "psyqo/primitives/common.hh"
 #include "psyqo/soft-math.hh"
 
-#include "../core_systems/asset_manager.h"
-#include "../core_systems/graphics.h"
-#include "../game_systems/animation.h"
+//#include "scenes/game_scene.h"
+#include "core_systems/asset_manager.h"
+#include "core_systems/graphics.h"
+#include "game_systems/animation.h"
 
 struct Stats
 {
@@ -22,6 +23,10 @@ struct Stats
     int16_t cooldownReduction = 0;
 };
 
+enum Group{NOT_SET, ENEMIES, ALLIES};
+
+class GameScene;
+
 class Character
 {
 public:
@@ -29,8 +34,7 @@ public:
     virtual ~Character();
     void Initialize(Texture* tex, const psyqo::Vec2 pos, const psyqo::Vertex size, const Animation anim, const Stats& stats );
     virtual void Update();
-    virtual void Draw(Graphics& gfx, int layer = 3) = 0;
-    // TODO: projectile
+    virtual void Draw(int layer) = 0;
     virtual void Attack(Character* character) = 0;
     virtual void TakeDamage(int16_t amount) = 0;
     void SetPosition(psyqo::Vec2 newPos){pos = newPos;};
@@ -47,8 +51,12 @@ public:
     psyqo::Color color{128,128,128};
     Animation anim;
     Stats stats;
+    bool alive = true;
+    Group group = Group::NOT_SET;
     int16_t attackCooldown;
     int16_t currentCooldown;
+    // for now, TODO: observer pattern ( godot style signals)
+    GameScene* scene;
 private:
 
 };
